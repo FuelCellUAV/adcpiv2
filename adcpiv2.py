@@ -54,6 +54,6 @@ with i2c.I2CMaster() as bus:
 		changechannel(adc_address2, 0xBC)
 		print ("Channel 6: %02f" % getadcreading(adc_address2))
 		changechannel(adc_address2, 0xDC)
-		print ("Channel 7 :%02f" % getadcreading(adc_address2))
+		print ("Channel 7: %02f" % getadcreading(adc_address2))
 		changechannel(adc_address2, 0xFC)
 		print ("Channel 8: %02f" % getadcreading(adc_address2))
