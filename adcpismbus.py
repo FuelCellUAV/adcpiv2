@@ -84,6 +84,6 @@ while True:
 	changechannel(adc_address2, 0xBC)
 	print ("Channel 6: %02f" % getadcreading(adc_address2, 0xBC))
 	changechannel(adc_address2, 0xDC)
-	print ("Channel 7 :%02f" % getadcreading(adc_address2, 0xDC))
+	print ("Channel 7: %02f" % getadcreading(adc_address2, 0xDC))
 	changechannel(adc_address2, 0xFC)
 	print ("Channel 8: %02f" % getadcreading(adc_address2, 0xFC))
