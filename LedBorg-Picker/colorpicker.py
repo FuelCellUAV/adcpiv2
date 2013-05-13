@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
-# read abelectronics ADC Pi V2 board inputs with repeating reading from each channel.
+# read abelectronics ADC Pi V2 board to change colours on LedBorg from http://piborg.com/ledborg.
 # uses quick2wire from http://quick2wire.com/ github: https://github.com/quick2wire/quick2wire-python-api
 # Requries Python 3 
 # GPIO API depends on Quick2Wire GPIO Admin. To install Quick2Wire GPIO Admin, follow instructions at http://github.com/quick2wire/quick2wire-gpio-admin
 # I2C API depends on I2C support in the kernel
 
-# Version 2.0  - 18/11/2012
+# Version 1.0  - 13/05/2013
 # Version History:
 # 1.0 - Initial Release
-# 2.0 - Change to code to 18 bit only mode with updates sequential reading
-#
+
 # Usage: changechannel(address, hexvalue) to change to new channel on adc chips
 # Usage: getadcreading(address) to return value in volts from selected channel.
 #
@@ -41,16 +40,16 @@ with i2c.I2CMaster() as bus:
 		return t * varMultiplier
 	
 	while True:
-		
+		# read ADC channel to get variable resistor voltage
 		changechannel(adc_address1, 0x9C)
 		colorval1 = getadcreading(adc_address1)
-		
+		# read ADC channel to get variable resistor voltage
 		changechannel(adc_address1, 0xBC)
 		colorval2 = getadcreading(adc_address1)
-		
+		# read ADC channel to get variable resistor voltage
 		changechannel(adc_address1, 0xDC)
 		colorval3 =  getadcreading(adc_address1)
-		
+		# convert colour values to ints and send to LedBorg
 		colour = "%d%d%d" % (colorval1, colorval2, colorval3)
 		LedBorg = open('/dev/ledborg', 'w')
 		LedBorg.write(colour)
