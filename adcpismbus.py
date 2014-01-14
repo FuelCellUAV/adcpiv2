@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # read abelectronics ADC Pi V2 board inputs with repeating reading from each channel.
 # # Requries Python 2.7
 # Requires SMBus 
