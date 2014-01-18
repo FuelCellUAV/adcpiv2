@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-# read abelectronics ADC Pi V2 board inputs with repeating reading from each channel to a text file.
+# read abelectronics ADC Pi V2 board inputs with repeating reading from each channel.
+# 16 bit data rate
 # # Requries Python 2.7
 # Requires SMBus 
 # I2C API depends on I2C support in the kernel
 
-# Version 1.0  - 06/02/2013
+# Version 1.0  - 18/01/2014
 # Version History:
 # 1.0 - Initial Release
 
@@ -16,7 +17,6 @@
 
 from smbus import SMBus
 import re
-import datetime
 
 adc_address1 = 0x68
 adc_address2 = 0x69
@@ -29,7 +29,7 @@ adcreading.append(0x00)
 adcreading.append(0x00)
 adcreading.append(0x00)
 
-varDivisior = 64 # from pdf sheet on adc addresses and config
+varDivisior = 1 # from pdf sheet on adc addresses and config
 varMultiplier = (2.4705882/varDivisior)/1000
 
 # detect i2C port number and assign to i2c_bus
@@ -53,41 +53,38 @@ def changechannel(address, adcConfig):
 def getadcreading(address, adcConfig):
 	adcreading = bus.read_i2c_block_data(address,adcConfig)
 	h = adcreading[0]
-	m = adcreading[1]
-	l = adcreading[2]
-	s = adcreading[3]
+	l = adcreading[1]
+	s = adcreading[2]
+	
 	# wait for new data
 	while (s & 128):
 		adcreading = bus.read_i2c_block_data(address,adcConfig)
 		h = adcreading[0]
-		m = adcreading[1]
-		l = adcreading[2]
-		s = adcreading[3]
+		l = adcreading[1]
+		s = adcreading[2]
+		
 	
 	# shift bits to product result
-	t = ((h & 0b00000001) << 16) | (m << 8) | l
+	t = (h << 8) | l
 	# check if positive or negative number and invert if needed
 	if (h > 128):
 		t = ~(0x020000 - t)
 	return t * varMultiplier
-def writetofile(texttowrtite):
-	f = open('/home/pi/Desktop/text.txt', 'a')
-	f.write(str(datetime.datetime.now()) + " " + texttowrtite)
-	f.closed	
+	
 while True:
-	changechannel(adc_address1, 0x9C)
-	writetofile ("Channel 1: %02f\n" % getadcreading(adc_address1,0x9C))
-	changechannel(adc_address1, 0xBC)
-	writetofile ("Channel 2: %02f\n" % getadcreading(adc_address1,0xBC))
-	changechannel(adc_address1, 0xDC)
-	writetofile ("Channel 3 :%02f\n" % getadcreading(adc_address1, 0xDC))
-	changechannel(adc_address1, 0xFC)
-	writetofile ("Channel 4: %02f\n" % getadcreading(adc_address1, 0xFC))
-	changechannel(adc_address2, 0x9C)
-	writetofile ("Channel 5: %02f\n" % getadcreading(adc_address2, 0x9C))
-	changechannel(adc_address2, 0xBC)
-	writetofile ("Channel 6: %02f\n" % getadcreading(adc_address2, 0xBC))
-	changechannel(adc_address2, 0xDC)
-	writetofile ("Channel 7: %02f\n" % getadcreading(adc_address2, 0xDC))
-	changechannel(adc_address2, 0xFC)
-	writetofile ("Channel 8: %02f\n" % getadcreading(adc_address2, 0xFC))
+	changechannel(adc_address1, 0x98)
+	print ("Channel 1: %02f" % getadcreading(adc_address1,0x98))
+	changechannel(adc_address1, 0xB8)
+	print ("Channel 2: %02f" % getadcreading(adc_address1,0xB8))
+	changechannel(adc_address1, 0xD8)
+	print ("Channel 3 :%02f" % getadcreading(adc_address1,0xD8))
+	changechannel(adc_address1, 0xF8)
+	print ("Channel 4: %02f" % getadcreading(adc_address1,0xF8))
+	changechannel(adc_address2, 0x98)
+	print ("Channel 5: %02f" % getadcreading(adc_address2,0x98))
+	changechannel(adc_address2, 0xB8)
+	print ("Channel 6: %02f" % getadcreading(adc_address2,0xB8))
+	changechannel(adc_address2, 0xD8)
+	print ("Channel 7 :%02f" % getadcreading(adc_address2,0xD8))
+	changechannel(adc_address2, 0xF8)
+	print ("Channel 8: %02f" % getadcreading(adc_address2,0xF8))
